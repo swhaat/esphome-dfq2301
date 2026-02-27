@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <vector>
 #include "esphome/core/automation.h"
 #include "esphome/core/component.h"
@@ -49,10 +50,10 @@ static const uint8_t DF2301Q_CFG_WAKE_TIME      = 0x84;
 // ── Trigger ───────────────────────────────────────────────────────────────────
 
 /// Fired every time the module recognises a command word.
-/// The automation receives the command word ID (uint8_t) as variable `x`.
-class DF2301QTrigger : public Trigger<uint8_t> {
+/// The automation receives the command word text (std::string) as variable `x`.
+class DF2301QTrigger : public Trigger<std::string> {
  public:
-  void process(uint8_t cmd_id) { this->trigger(cmd_id); }
+  void process(const std::string &cmd_text) { this->trigger(cmd_text); }
 };
 
 // ── Base mixin (shared API for both I²C and UART components) ──────────────────
@@ -72,6 +73,7 @@ class DF2301QBase {
 
  protected:
   void fire_trigger_(uint8_t cmd_id);
+  static std::string cmd_id_to_text(uint8_t cmd_id);
   std::vector<DF2301QTrigger *> triggers_;
 };
 

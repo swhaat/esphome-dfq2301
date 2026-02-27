@@ -55,12 +55,8 @@ df2301q:
   on_command:
     then:
       - logger.log:
-          format: "Recognised command ID: %d"
-          args: [x]
-      # Play back the reply audio for that command
-      - df2301q.play_command:
-          id: voice_sensor
-          command_id: !lambda return x;
+          format: "Recognised command: %s"
+          args: [x.c_str()]
 ```
 
 ### UART wiring (Gravity connector)
@@ -92,8 +88,8 @@ df2301q:
   on_command:
     then:
       - logger.log:
-          format: "Recognised command ID: %d"
-          args: [x]
+          format: "Recognised command: %s"
+          args: [x.c_str()]
 ```
 
 ### I²C wiring
@@ -192,19 +188,13 @@ df2301q:
   on_command:
     then:
       - lambda: |-
-          switch (x) {
-            // Built-in command IDs (see DFRobot documentation)
-            case 5:   // "Turn on the light"
-              id(my_light).turn_on();
-              break;
-            case 6:   // "Turn off the light"
-              id(my_light).turn_off();
-              break;
-            case 103: // "What time is it?" – just play the reply audio
-              id(voice).play_command(103);
-              break;
-            default:
-              ESP_LOGD("voice", "Unhandled command ID: %d", x);
+          // x is the recognised command text (std::string)
+          if (x == "Turn on the light") {
+            id(my_light).turn_on();
+          } else if (x == "Turn off the light") {
+            id(my_light).turn_off();
+          } else {
+            ESP_LOGD("voice", "Unhandled command: %s", x.c_str());
           }
 
 light:
@@ -216,17 +206,28 @@ light:
 
 ---
 
-## Known command IDs (built-in, English firmware)
+## Known command text values (built-in, English firmware)
 
-| ID | Command |
+The `on_command` trigger exposes the recognised phrase as the string variable `x`.
+A selection of common built-in commands is shown below; see the
+[DFRobot DF2301Q wiki](https://wiki.dfrobot.com/SKU_SEN0539-EN_Offline_Voice_Recognition_Sensor_I2C_UART)
+for the full list.
+
+| Text (`x`) | Notes |
 |---|---|
-| 1  | Wake word ("Hey Siri" variant) |
-| 5  | Turn on the light |
-| 6  | Turn off the light |
-| 7  | Increase brightness |
-| 8  | Decrease brightness |
-| 9  | Maximum brightness |
-| 10 | Minimum brightness |
+| `"Hello, Robot"` | Default wake word |
+| `"Custom Command 1"` – `"Custom Command 17"` | User-learned commands |
+| `"Go forward"` | |
+| `"Retreat"` | |
+| `"Turn on the light"` | |
+| `"Turn off the light"` | |
+| `"Brighten the light"` | |
+| `"Dim the light"` | |
+| `"Set to red"` – `"Set to white"` | Colour presets |
+| `"Turn on the fan"` / `"Turn off the fan"` | |
+| `"Turn on AC"` / `"Turn off AC"` | |
+| `"Open curtain"` / `"Close curtain"` | |
+| `"Volume up"` / `"Volume down"` | |
 | … | *(see DFRobot wiki for the full list)* |
 
 ---
