@@ -19,9 +19,175 @@ static const char *const TAG = "df2301q";
 
 // ── DF2301QBase ───────────────────────────────────────────────────────────────
 
+/**
+ * Map a command word ID to its human-readable English text.
+ *
+ * Source: DFRobot DF2301Q wiki
+ *   https://wiki.dfrobot.com/SKU_SEN0539-EN_Offline_Voice_Recognition_Sensor_I2C_UART
+ *
+ * IDs 0–2  : silence / wake-up words
+ * IDs 5–21 : user-learned custom commands
+ * IDs 22+  : built-in fixed command words
+ */
+std::string DF2301QBase::cmd_id_to_text(uint8_t cmd_id) {
+  switch (cmd_id) {
+    case 0:   return "Silence";
+    case 1:   return "Wake up words for learning";
+    case 2:   return "Hello, Robot";
+    case 5:   return "Custom Command 1";
+    case 6:   return "Custom Command 2";
+    case 7:   return "Custom Command 3";
+    case 8:   return "Custom Command 4";
+    case 9:   return "Custom Command 5";
+    case 10:  return "Custom Command 6";
+    case 11:  return "Custom Command 7";
+    case 12:  return "Custom Command 8";
+    case 13:  return "Custom Command 9";
+    case 14:  return "Custom Command 10";
+    case 15:  return "Custom Command 11";
+    case 16:  return "Custom Command 12";
+    case 17:  return "Custom Command 13";
+    case 18:  return "Custom Command 14";
+    case 19:  return "Custom Command 15";
+    case 20:  return "Custom Command 16";
+    case 21:  return "Custom Command 17";
+    case 22:  return "Go forward";
+    case 23:  return "Retreat";
+    case 24:  return "Park a car";
+    case 25:  return "Turn left ninety degrees";
+    case 26:  return "Turn left forty-five degrees";
+    case 27:  return "Turn left thirty degrees";
+    case 29:  return "Turn right forty-five degrees";
+    case 30:  return "Turn right thirty degrees";
+    case 31:  return "Shift down a gear";
+    case 32:  return "Line tracking mode";
+    case 33:  return "Light tracking mode";
+    case 34:  return "Bluetooth mode";
+    case 35:  return "Obstacle avoidance mode";
+    case 36:  return "Face recognition";
+    case 37:  return "Object tracking";
+    case 38:  return "Object recognition";
+    case 39:  return "Line tracking";
+    case 40:  return "Color recognition";
+    case 41:  return "Tag recognition";
+    case 42:  return "Object sorting";
+    case 43:  return "QR code recognition";
+    case 44:  return "General settings";
+    case 45:  return "Clear screen";
+    case 46:  return "Learn once";
+    case 47:  return "Forget";
+    case 48:  return "Load model";
+    case 49:  return "Save model";
+    case 50:  return "Take photos and save them";
+    case 51:  return "Save and return";
+    case 52:  return "Display number zero";
+    case 53:  return "Display number one";
+    case 54:  return "Display number two";
+    case 55:  return "Display number three";
+    case 56:  return "Display number four";
+    case 57:  return "Display number five";
+    case 58:  return "Display number six";
+    case 59:  return "Display number seven";
+    case 60:  return "Display number eight";
+    case 61:  return "Display number nine";
+    case 62:  return "Display smiley face";
+    case 63:  return "Display crying face";
+    case 64:  return "Display heart";
+    case 65:  return "Turn off dot matrix";
+    case 66:  return "Read current posture";
+    case 67:  return "Read ambient light";
+    case 68:  return "Read compass";
+    case 69:  return "Read temperature";
+    case 70:  return "Read acceleration";
+    case 71:  return "Reading sound intensity";
+    case 72:  return "Calibrate electronic gyroscope";
+    case 73:  return "Turn on the camera";
+    case 74:  return "Turn off the camera";
+    case 75:  return "Turn on the fan";
+    case 76:  return "Turn off the fan";
+    case 77:  return "Turn fan speed to gear one";
+    case 78:  return "Turn fan speed to gear two";
+    case 79:  return "Turn fan speed to gear three";
+    case 80:  return "Start oscillating";
+    case 81:  return "Stop oscillating";
+    case 82:  return "Reset";
+    case 83:  return "Set servo to ten degrees";
+    case 84:  return "Set servo to thirty degrees";
+    case 85:  return "Set servo to forty-five degrees";
+    case 86:  return "Set servo to sixty degrees";
+    case 87:  return "Set servo to ninety degrees";
+    case 88:  return "Turn on the buzzer";
+    case 89:  return "Turn off the buzzer";
+    case 90:  return "Turn on the speaker";
+    case 91:  return "Turn off the speaker";
+    case 92:  return "Play music";
+    case 93:  return "Stop playing";
+    case 94:  return "The last track";
+    case 95:  return "The next track";
+    case 96:  return "Repeat this track";
+    case 97:  return "Volume up";
+    case 98:  return "Volume down";
+    case 99:  return "Change volume to maximum";
+    case 100: return "Change volume to minimum";
+    case 101: return "Change volume to medium";
+    case 102: return "Play poem";
+    case 103: return "Turn on the light";
+    case 104: return "Turn off the light";
+    case 105: return "Brighten the light";
+    case 106: return "Dim the light";
+    case 107: return "Adjust brightness to maximum";
+    case 108: return "Adjust brightness to minimum";
+    case 109: return "Increase color temperature";
+    case 110: return "Decrease color temperature";
+    case 111: return "Adjust color temperature to maximum";
+    case 112: return "Adjust color temperature to minimum";
+    case 113: return "Daylight mode";
+    case 114: return "Moonlight mode";
+    case 115: return "Color mode";
+    case 116: return "Set to red";
+    case 117: return "Set to orange";
+    case 118: return "Set to yellow";
+    case 119: return "Set to green";
+    case 120: return "Set to cyan";
+    case 121: return "Set to blue";
+    case 122: return "Set to purple";
+    case 123: return "Set to white";
+    case 124: return "Turn on AC";
+    case 125: return "Turn off AC";
+    case 126: return "Increase temperature";
+    case 127: return "Decrease temperature";
+    case 128: return "Cool mode";
+    case 129: return "Heat mode";
+    case 130: return "Auto mode";
+    case 131: return "Dry mode";
+    case 132: return "Fan mode";
+    case 133: return "Enable blowing up-down";
+    case 134: return "Disable blowing up-down";
+    case 135: return "Enable blowing right-left";
+    case 136: return "Disable blowing right-left";
+    case 137: return "Open the window";
+    case 138: return "Close the window";
+    case 139: return "Open curtain";
+    case 140: return "Close curtain";
+    case 141: return "Open the door";
+    case 142: return "Close the door";
+    case 200: return "Learning wake word";
+    case 201: return "Learning command word";
+    case 202: return "Re-learn";
+    case 203: return "Exit learning";
+    case 204: return "I want to delete";
+    case 205: return "Delete wake word";
+    case 206: return "Delete command word";
+    case 207: return "Exit deleting";
+    case 208: return "Delete all";
+    default:  return "Unknown command " + std::to_string(cmd_id);
+  }
+}
+
 void DF2301QBase::fire_trigger_(uint8_t cmd_id) {
+  std::string text = cmd_id_to_text(cmd_id);
   for (auto *t : this->triggers_)
-    t->process(cmd_id);
+    t->process(text);
 }
 
 // ── DF2301QI2CComponent – I²C implementation ──────────────────────────────────

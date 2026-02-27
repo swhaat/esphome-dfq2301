@@ -18,8 +18,8 @@ YAML example (UART mode – recommended):
     on_command:
       then:
         - logger.log:
-            format: "Recognised command ID: %d"
-            args: [x]
+            format: "Recognised command: %s"
+            args: [x.c_str()]
 
 YAML example (I²C mode):
   i2c:
@@ -33,8 +33,8 @@ YAML example (I²C mode):
     on_command:
       then:
         - logger.log:
-            format: "Recognised command ID: %d"
-            args: [x]
+            format: "Recognised command: %s"
+            args: [x.c_str()]
 """
 
 from esphome import automation
@@ -72,7 +72,7 @@ DF2301QUARTComponent = df2301q_ns.class_(
 
 # Trigger type
 DF2301QTrigger = df2301q_ns.class_(
-    "DF2301QTrigger", automation.Trigger.template(cg.uint8)
+    "DF2301QTrigger", automation.Trigger.template(cg.std_string)
 )
 
 # Action types – all operate on DF2301QBase so they work with both modes
@@ -156,7 +156,7 @@ async def to_code(config):
     for conf in config.get(CONF_ON_COMMAND, []):
         trigger = cg.new_Pvariable(conf[CONF_TRIGGER_ID])
         cg.add(var.register_trigger(trigger))
-        await automation.build_automation(trigger, [(cg.uint8, "x")], conf)
+        await automation.build_automation(trigger, [(cg.std_string, "x")], conf)
 
 
 # ── Actions ───────────────────────────────────────────────────────────────────
